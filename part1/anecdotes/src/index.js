@@ -1,16 +1,11 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-
-
-
-
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
 
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
@@ -29,7 +24,6 @@ const App = (props) => {
   }
 
   const mostVotesIndex = votes.indexOf(Math.max(...votes))
-
 
   return (
     <>
