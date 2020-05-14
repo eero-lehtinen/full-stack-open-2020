@@ -76,6 +76,7 @@ const App = () => {
 
 			if (result) {
 				let id = persons.find(person => person.name === newName).id
+
 				personService.update(id, { name: newName, number: newNumber }).then(returnedPerson => {
 					setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
 					showNotification(`Replaced ${returnedPerson.name}`, false)
@@ -92,7 +93,7 @@ const App = () => {
 			setPersons(persons.concat(returnedPerson))
 			showNotification(`Added ${returnedPerson.name}`, false)
 		}).catch(error => {
-			showNotification(`Couldn't add ${newPerson.name} to database`, true)
+			showNotification(error.response.data.error, true)
 		})
 	}
 
