@@ -1,4 +1,5 @@
 const logger = require('./logger')
+require('express-async-errors')
 
 const requestLogger = (request, response, next) => {
 	logger.info('Method:', request.method)
@@ -8,8 +9,9 @@ const requestLogger = (request, response, next) => {
 	next()
 }
 
-const unknownEndpoint = (request, response) => {
+const unknownEndpoint = (request, response, next) => {
 	response.status(404).send({ error: 'unknown endpoint' })
+	next()
 }
 
 const errorHandler = (error, request, response, next) => {
@@ -21,7 +23,7 @@ const errorHandler = (error, request, response, next) => {
 		return response.status(400).json({ error: error.message })
 	}
 
-	next(error)
+	next()
 }
 
 module.exports = {

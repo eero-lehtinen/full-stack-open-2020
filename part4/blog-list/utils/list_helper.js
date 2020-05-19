@@ -49,8 +49,6 @@ const mostLikes = (blogs) => {
 		blogLikesCounts[blog.author] += blog.likes
 	}
 
-	console.log(blogLikesCounts)
-
 	let mostLikedAuthor = { author: undefined, likes: Number.NEGATIVE_INFINITY }
 
 	for (let blogAuthor in blogLikesCounts) {

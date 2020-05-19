@@ -11,3 +11,26 @@ content-type: application/json
 	"url": "url-test2",
 	"likes": "5552"
 }
+
+###
+
+POST http://localhost:3001/api/blogs
+content-type: application/json
+
+{
+	"url": "url-test2",
+	"likes": "5552"
+}
+
+###
+
+DELETE http://localhost:3001/api/blogs/5ec02f6c2252e5246e9a8edb
+
+###
+
+PUT http://localhost:3001/api/blogs/5ec02b37c931871a586abf24
+content-type: application/json
+
+{
+	"likes": "1"
+}
