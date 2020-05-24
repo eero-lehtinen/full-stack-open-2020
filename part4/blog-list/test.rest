@@ -6,9 +6,9 @@ POST http://localhost:3001/api/blogs
 content-type: application/json
 
 {
-	"title": "title-test2",
-	"author": "author-test2",
-	"url": "url-test2",
+	"title": "title-test3",
+	"author": "author-test3",
+	"url": "url-test3",
 	"likes": "5552"
 }
 
@@ -24,7 +24,7 @@ content-type: application/json
 
 ###
 
-DELETE http://localhost:3001/api/blogs/5ec02f6c2252e5246e9a8edb
+DELETE http://localhost:3001/api/blogs/5ec9a97348dc480901c31613
 
 ###
 
@@ -34,3 +34,18 @@ content-type: application/json
 {
 	"likes": "1"
 }
+
+###
+
+POST http://localhost:3001/api/users 
+content-type: application/json
+
+{
+	"name": "asdff",
+	"username": "asdff",
+	"password": "asdf"
+}
+
+###
+
+GET http://localhost:3001/api/users 
