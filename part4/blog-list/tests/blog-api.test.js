@@ -33,75 +33,19 @@ describe('when there are two blogs in the db', () => {
 			expect(blog.id).toBeDefined()
 		}
 	})
-
-	test('blogs can be added', async () => {
-		const blog = {
-			title: 'added',
-			author: 'added',
-			url: 'added',
-			likes: 10,
-		}
-		await api.post('/api/blogs').send(blog).expect(201)
-
-		const newBlogs = await helper.blogsInDb()
-
-		expect(newBlogs).toHaveLength(helper.initialBlogs.length + 1)
-		expect(newBlogs.map(blog => blog.title)).toContain('added')
-	})
-
-	test('likes is zero if it is emitted when saving', async () => {
-		const blog = {
-			title: 'added',
-			author: 'added',
-			url: 'added'
-		}
-
-		const response = await api.post('/api/blogs').send(blog).expect(201)
-
-		const newBlog = response.body
-
-		expect(newBlog.likes).toBe(0)
-	})
-
-
-	test('responds with 400 if title or url are not set', async () => {
-		// Silence errors for this test, because they are expected
-		const consoleError = console.error
-		console.error = jest.fn()
-
-		let blog = {
-			title: 'added',
-			url: 'added',
-			likes: 10
-		}
-
-		await api.post('/api/blogs').send(blog).expect(400)
-
-		blog = {
-			author: 'added',
-			url: 'added',
-			likes: 10
-		}
-
-		await api.post('/api/blogs').send(blog).expect(400)
-
-		blog = {
-			url: 'added',
-			likes: 10
-		}
-
-		await api.post('/api/blogs').send(blog).expect(400)
-
-		console.error = consoleError
-	})
 })
+
+const initialUsername = 'test-user'
+const initialName = 'test-name'
+const initialPassword = 'test-password'
+const initialLoginInfo = { username: initialUsername, password: initialPassword }
 
 describe('when there is one user in the db', () => {
 	beforeEach(async () => {
 		await User.deleteMany({})
 
-		const passwordHash = await bcrypt.hash('pswd', 1)
-		const user = new User({ username: 'test-username', name: 'test-name', passwordHash })
+		const passwordHash = await bcrypt.hash(initialPassword, 1)
+		const user = new User({ username: initialUsername, name: initialName, passwordHash })
 
 		await user.save()
 	})
@@ -148,6 +92,115 @@ describe('when there is one user in the db', () => {
 		const newUsers = await helper.usersInDb()
 
 		expect(newUsers).toHaveLength(oldUsers.length)
+	})
+
+	describe('when adding a blog', () => {
+		test('a blog can be added with correct user token', async () => {
+			const loginResponse = await api.post('/api/login').send(initialLoginInfo)
+
+			const blog = {
+				title: 'added',
+				author: 'added',
+				url: 'added',
+				likes: 10,
+			}
+
+			await api
+				.post('/api/blogs')
+				.set('Authorization', `Bearer ${loginResponse.body.token}`)
+				.send(blog)
+				.expect(201)
+
+			const newBlogs = await helper.blogsInDb()
+
+			expect(newBlogs).toHaveLength(helper.initialBlogs.length + 1)
+			expect(newBlogs.map(blog => blog.title)).toContain('added')
+		})
+
+		test('likes is set to zero if it is emitted', async () => {
+			const loginResponse = await api.post('/api/login').send(initialLoginInfo)
+
+			const blog = {
+				title: 'added',
+				author: 'added',
+				url: 'added'
+			}
+
+			const response = await api
+				.post('/api/blogs')
+				.set('Authorization', `Bearer ${loginResponse.body.token}`)
+				.send(blog)
+				.expect(201)
+
+			const newBlog = response.body
+
+			expect(newBlog.likes).toBe(0)
+		})
+
+		test('responds with 400 if title or url are not set', async () => {
+			const loginResponse = await api.post('/api/login').send(initialLoginInfo)
+
+			// Silence errors for this test, because they are expected
+			const consoleError = console.error
+			console.error = jest.fn()
+
+			let blog = {
+				title: 'added',
+				url: 'added',
+				likes: 10
+			}
+
+			await api
+				.post('/api/blogs')
+				.set('Authorization', `Bearer ${loginResponse.body.token}`)
+				.send(blog)
+				.expect(400)
+
+			blog = {
+				author: 'added',
+				url: 'added',
+				likes: 10
+			}
+
+			await api
+				.post('/api/blogs')
+				.set('Authorization', `Bearer ${loginResponse.body.token}`)
+				.send(blog)
+				.expect(400)
+
+			blog = {
+				url: 'added',
+				likes: 10
+			}
+
+			await api
+				.post('/api/blogs')
+				.set('Authorization', `Bearer ${loginResponse.body.token}`)
+				.send(blog)
+				.expect(400)
+
+			console.error = consoleError
+		})
+
+		test('responds with 401 if we don\'t supply a token', async () => {
+			// Silence errors for this test, because they are expected
+			const consoleError = console.error
+			console.error = jest.fn()
+
+			const blog = {
+				title: 'added',
+				author: 'added',
+				url: 'added',
+				likes: 10,
+			}
+
+			await api
+				.post('/api/blogs')
+				.send(blog)
+				.expect(401)
+
+			console.error = consoleError
+		})
 	})
 })
 
