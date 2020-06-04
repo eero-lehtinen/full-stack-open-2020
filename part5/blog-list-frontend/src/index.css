@@ -1,3 +1,7 @@
+html {
+  font-family: Verdana, sans-serif;
+}
+
 
 .error {
   color: red;
@@ -17,4 +21,10 @@
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
+}
+
+.blog {
+  margin-top: 8px;
+  padding: 5px;
+  border: 1px solid black;
 }

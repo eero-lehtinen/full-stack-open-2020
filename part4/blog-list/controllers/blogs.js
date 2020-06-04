@@ -24,7 +24,9 @@ blogsRouter.post('/', async (request, response) => {
 	user.blogs = user.blogs.concat(savedBlog._id)
 	await user.save()
 
-	response.status(201).json(savedBlog)
+	const populatedSavedBlog = await savedBlog.execPopulate('user', { username: 1, name: 1 })
+
+	response.status(201).json(populatedSavedBlog)
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
@@ -34,7 +36,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 	}
 
 	const blog = await Blog.findById(request.params.id)
-	if (blog.user.toString() !== decodedToken.id.toString()) {
+	if (blog.user.toString() !== decodedToken.id) {
 		return response.status(401).json({ error: 'invalid permissions' })
 	}
 
@@ -45,8 +47,16 @@ blogsRouter.delete('/:id', async (request, response) => {
 blogsRouter.put('/:id', async (request, response) => {
 	let blog = request.body
 
+	// Change from populated user to depopulated id
+	if (typeof blog.user !== 'string') {
+		blog.user = blog.user.id
+	}
+
 	const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-	response.json(updatedBlog)
+
+	const populatedUpdatedBlog = await updatedBlog.execPopulate('user', { username: 1, name: 1 })
+
+	response.json(populatedUpdatedBlog)
 })
 
 module.exports = blogsRouter
