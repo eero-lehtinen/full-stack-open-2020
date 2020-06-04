@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import BlogInput from './components/CreateBlogInput'
 import Notification from './components/Notification'
@@ -52,7 +51,7 @@ const App = () => {
 			setUser(user)
 			setUsername('')
 			setPassword('')
-			showNotification(`login success`, false)
+			showNotification('login success', false)
 		} catch (exception) {
 			showNotification('wrong username or password', true)
 		}
@@ -97,7 +96,7 @@ const App = () => {
 				setBlogs(blogs.filter(blog => blog.id !== deletedBlogCopy.id).sort((a, b) => b.likes - a.likes))
 				showNotification(`removed blog "${deletedBlogCopy.title}" by ${deletedBlogCopy.author}`, false)
 			}
-			catch {
+			catch (e) {
 				showNotification(`cannot remove blog "${blog.title}" by ${blog.author}`, true)
 			}
 		}
@@ -116,7 +115,7 @@ const App = () => {
 				</div>
 				<div>
 					password
-						<input
+					<input
 						type="password" value={password} name="Password"
 						onChange={({ target }) => setPassword(target.value)}
 					/>
@@ -138,7 +137,6 @@ const App = () => {
 			</Togglable>
 			{blogs.map(blog =>
 				<Blog key={blog.id} blog={blog}
-					showNotification={showNotification}
 					removable={user.username === blog.user.username}
 					remove={remove}
 					addLike={addLike}
