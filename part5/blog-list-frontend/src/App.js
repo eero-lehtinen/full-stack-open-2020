@@ -105,6 +105,7 @@ const App = () => {
 	const loginForm = () => (
 		<>
 			<h2>Log in</h2>
+			<Notification notification={notification} />
 			<form onSubmit={handleLogin}>
 				<div>
 					username
@@ -125,14 +126,12 @@ const App = () => {
 		</>
 	)
 
-	console.log(blogs)
-
 	const blogsForm = () => (
 		<>
 			<h2>Blogs</h2>
 			<Notification notification={notification} />
 			<p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-			<Togglable buttonLabel='new note' ref={createBlogInputRef}>
+			<Togglable buttonLabel='new blog' ref={createBlogInputRef}>
 				<BlogInput createBlog={createBlog} />
 			</Togglable>
 			{blogs.map(blog =>
