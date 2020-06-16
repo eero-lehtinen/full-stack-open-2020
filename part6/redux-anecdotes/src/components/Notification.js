@@ -1,19 +1,24 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 
-const Notification = () => {
-	const notification = useSelector(store => store.notification)
-
+const Notification = (props) => {
 	const style = {
 		border: 'solid',
 		padding: 10,
 		borderWidth: 1
 	}
 	return (
-		(notification && <div style={style}>
-			{notification}
+		(props.notification && <div style={style}>
+			{props.notification}
 		</div>)
 	)
 }
 
-export default Notification
+const mapStateToProps = (state) => {
+	return {
+		notification: state.notification
+	}
+}
+
+const ConnectedNotification = connect(mapStateToProps)(Notification)
+export default ConnectedNotification

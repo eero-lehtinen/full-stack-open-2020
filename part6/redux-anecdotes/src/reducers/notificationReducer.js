@@ -1,10 +1,16 @@
+let notifTimeoutHandle = null;
+
 export const setNotification = (text, time) => {
 	return async dispatch => {
 		dispatch({
 			type: 'SET_NOTIFICATION',
 			data: { text }
 		})
-		setTimeout(() => { dispatch({ type: 'CLEAR_NOTIFICATION' }) }, time * 1000)
+		if (notifTimeoutHandle)
+			clearTimeout(notifTimeoutHandle)
+		notifTimeoutHandle = setTimeout(() => {
+			dispatch({ type: 'CLEAR_NOTIFICATION' })
+		}, time * 1000)
 	}
 }
 
