@@ -1,36 +1,46 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import React from 'react'
 import { removeBlog, addLike } from '../reducers/blogReducer'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+	useRouteMatch, useHistory
+} from "react-router-dom"
 
-const Blog = ({ blog, removable }) => {
+const Blog = () => {
+
+	const history = useHistory()
 	const dispatch = useDispatch()
-	const [visible, setVisible] = useState(false)
+
+	const blogs = useSelector(state => state.blogs)
+	const loggedUser = useSelector(state => state.loggedUser)
+
+	const idMatch = useRouteMatch('/blogs/:id')
+	const blog = idMatch
+		? blogs.find(blog => blog.id === idMatch.params.id)
+		: null
 
 	const remove = blog => {
 		let result = window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)
-		if (result)
+		if (result) {
 			dispatch(removeBlog(blog))
+			history.push('/')
+		}
 	}
 
-	return (
-		<div className='blog'>
-			<div>{blog.title} {blog.author} <button className='view' onClick={() => setVisible(!visible)}>{visible ? 'hide' : 'view'}</button></div>
-			{visible &&
-				<div>
-					<div>{blog.url}</div>
-					<div>likes {blog.likes} <button className='like' onClick={() => dispatch(addLike(blog.id))}>like</button></div>
-					<div>{blog.user.name}</div>
-					{removable && <button className='delete' onClick={() => remove(blog)}>remove</button>}
-				</div>
-			}
-		</div>
-	)
-}
-
-Blog.propTypes = {
-	blog: PropTypes.object.isRequired,
-	removable: PropTypes.bool.isRequired,
+	if (blog) {
+		return (
+			<>
+				<h1>{blog.title} by {blog.author}</h1>
+				<a href={blog.url}>{blog.url}</a>
+				<div>{blog.likes} likes <button className='like' onClick={() => dispatch(addLike(blog.id))}>like</button></div>
+				<div>added by {blog.user.name}</div>
+				{loggedUser.username === blog.user.username && <button className='delete' onClick={() => remove(blog)}>remove</button>}
+			</>
+		)
+	}
+	else {
+		return null
+	}
 }
 
 export default Blog
+

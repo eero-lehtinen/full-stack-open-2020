@@ -3,13 +3,19 @@ import Blog from './components/Blog'
 import BlogInput from './components/CreateBlogInput'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import Users from './components/Users'
+import User from './components/User'
 import { initializeBlogs } from './reducers/blogReducer'
-import { tryLoginFromStorage, login, logout } from './reducers/userReducer'
+import { tryLoginFromStorage, login, logout } from './reducers/loginReducer'
 import { useDispatch, useSelector } from 'react-redux'
+import {
+	Switch, Route, Link, useRouteMatch, useHistory
+} from "react-router-dom"
+
 
 const App = () => {
 	const blogs = useSelector(state => state.blogs)
-	const user = useSelector(state => state.users.loggedUser)
+	const loggedUser = useSelector(state => state.loggedUser)
 
 	const dispatch = useDispatch()
 
@@ -58,24 +64,42 @@ const App = () => {
 		</>
 	)
 
-	const blogsForm = () => (
+	const loggedUserElement = () => (
 		<>
 			<h2>Blogs</h2>
 			<Notification />
-			<p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+			<p>{loggedUser.name} logged in <button onClick={handleLogout}>logout</button></p>
+		</>
+	)
+
+	const home = () => (
+		<>
 			<Togglable buttonLabel='new blog' ref={createBlogInputToggleRef}>
 				<BlogInput toggleRef={createBlogInputToggleRef} />
 			</Togglable>
 			{blogs.map(blog =>
-				<Blog key={blog.id} blog={blog} removable={user.username === blog.user.username} />
-			)}
+				<Link key={blog.id} to={`/blogs/${blog.id}`} >{blog.title} by {blog.author}</Link>)}
 		</>
 	)
 
 	return (
-		<div>
-			{user === null ? loginForm() : blogsForm()}
-		</div>
+		<>
+			{loggedUser === null ? loginForm() : loggedUserElement()}
+			<Switch>
+				<Route path='/blogs/:id'>
+					<Blog />
+				</Route>
+				<Route path='/users/:id'>
+					<User />
+				</Route>
+				<Route path='/users'>
+					<Users />
+				</Route>
+				<Route path='/'>
+					{loggedUser === null ? null : home()}
+				</Route>
+			</Switch>
+		</>
 	)
 }
 
