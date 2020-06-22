@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
+import { createBlog } from '../reducers/blogReducer'
+import { useDispatch } from 'react-redux'
 
-const BlogInput = ({ createBlog }) => {
+const BlogInput = ({ toggleRef }) => {
 	const [title, setTitle] = useState('')
 	const [author, setAuthor] = useState('')
 	const [url, setUrl] = useState('')
+
+	const dispatch = useDispatch()
 
 	const clearValues = () => {
 		setTitle('')
@@ -13,10 +17,9 @@ const BlogInput = ({ createBlog }) => {
 
 	const onSubmit = async (event) => {
 		event.preventDefault()
-		const success = await createBlog(title, author, url)
-
-		if (success)
-			clearValues()
+		dispatch(createBlog(title, author, url))
+		if (toggleRef) toggleRef.current.toggleVisibility()
+		clearValues()
 	}
 
 	return (
