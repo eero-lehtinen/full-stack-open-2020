@@ -1,4 +1,5 @@
 import React, { useState, useImperativeHandle } from 'react'
+import { Button } from 'antd'
 
 const Togglable = (props, ref) => {
 	const [visible, setVisible] = useState(false)
@@ -17,13 +18,13 @@ const Togglable = (props, ref) => {
 	})
 
 	return (
-		<div>
+		<div className='togglable'>
 			<div style={hideWhenVisible}>
-				{<button onClick={toggleVisibility}>{props.buttonLabel}</button>}
+				{<Button type='primary' onClick={toggleVisibility}>{props.buttonLabel}</Button>}
 			</div>
 			<div style={showWhenVisible}>
 				{props.children}
-				<button onClick={toggleVisibility}>cancel</button>
+				<Button className='close-toggle' onClick={toggleVisibility}>cancel</Button>
 			</div>
 		</div>
 	)

@@ -1,60 +1,53 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { createBlog } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
+import { Form, Input, Button } from 'antd'
 
 const BlogInput = ({ toggleRef }) => {
-	const [title, setTitle] = useState('')
-	const [author, setAuthor] = useState('')
-	const [url, setUrl] = useState('')
 
 	const dispatch = useDispatch()
 
-	const clearValues = () => {
-		setTitle('')
-		setAuthor('')
-		setUrl('')
-	}
-
-	const onSubmit = async (event) => {
-		event.preventDefault()
-		dispatch(createBlog(title, author, url))
+	const onSubmit = async (data) => {
+		dispatch(createBlog(data.title, data.author, data.url))
 		if (toggleRef) toggleRef.current.toggleVisibility()
-		clearValues()
 	}
 
 	return (
 		<>
 			<h2>Create a new blog</h2>
-			<form onSubmit={onSubmit}>
-				<div>
-					title:
-					<input
-						type="text"
-						value={title}
-						name="Title"
-						onChange={({ target }) => setTitle(target.value)}
-					/>
-				</div>
-				<div>
-					author:
-					<input
-						type="text"
-						value={author}
-						name="Author"
-						onChange={({ target }) => setAuthor(target.value)}
-					/>
-				</div>
-				<div>
-					url:
-					<input
-						type="text"
-						value={url}
-						name="Url"
-						onChange={({ target }) => setUrl(target.value)}
-					/>
-				</div>
-				<button type="submit">create</button>
-			</form>
+			<Form onFinish={onSubmit}>
+				<Form.Item
+					label="Title"
+					name="title"
+					rules={[
+						{
+							required: true,
+							message: 'Please input a title!',
+						}
+					]}
+				>
+					<Input />
+				</Form.Item>
+				<Form.Item
+					label="Author"
+					name="author"
+					rules={[
+						{
+							required: true,
+							message: 'Please input an author!',
+						},
+					]}
+				>
+					<Input />
+				</Form.Item>
+				<Form.Item
+					label="Url"
+					name="url"
+				>
+					<Input />
+				</Form.Item>
+				<Button type='primary' htmlType='submit'>create</Button>
+			</Form>
 		</>
 	)
 }

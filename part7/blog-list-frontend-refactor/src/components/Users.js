@@ -4,31 +4,33 @@ import {
 } from "react-router-dom"
 import { useSelector, useDispatch } from 'react-redux'
 import { initializeUsers } from '../reducers/userReducer'
+import { Table } from 'antd'
 
 const Users = () => {
 	const users = useSelector(state => state.users)
 	const dispatch = useDispatch()
 
-	useEffect(() => { dispatch(initializeUsers()) }, [])
+	useEffect(() => { dispatch(initializeUsers()) }, [dispatch])
+
+	const columns = [
+		{
+			title: 'Name',
+			dataIndex: ['id', 'username'],
+			key: 'username',
+			render: (data, record) => (<div key={record.id}><Link to={`/users/${record.id}`}>{record.username}</Link></div>)
+		},
+		{
+			title: 'Blogs created',
+			dataIndex: 'blogs',
+			key: 'blogs',
+			render: (blogs, record) => blogs.length
+		}
+	]
 
 	return (
 		<>
 			<h2>Users</h2>
-			<table>
-				<thead>
-					<tr>
-						<td></td><td><b>blogs created</b></td>
-					</tr>
-				</thead>
-				<tbody>
-					{users.map(user =>
-						<tr key={user.id}>
-							<td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
-							<td>{user.blogs.length}</td>
-						</tr>
-					)}
-				</tbody>
-			</table>
+			<Table columns={columns} dataSource={users} rowKey='id' />
 		</>
 	)
 }

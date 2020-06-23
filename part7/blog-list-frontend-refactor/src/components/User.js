@@ -1,8 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import {
-	useRouteMatch, useHistory
-} from "react-router-dom"
+import { useRouteMatch } from "react-router-dom"
+import { List, Divider } from 'antd'
 
 const User = () => {
 	const users = useSelector(state => state.users)
@@ -15,12 +14,8 @@ const User = () => {
 		return (
 			<>
 				<h2>{user.name}</h2>
-				<h3>added blogs</h3>
-				<ul>
-					{user.blogs.map(blog =>
-						<li key={blog.id}>{blog.title}</li>
-					)}
-				</ul>
+				<Divider orientation='left'>Added blogs</Divider>
+				<List bordered dataSource={user.blogs} renderItem={blog => <List.Item>{blog.title}</List.Item>} />
 			</>
 		)
 	}

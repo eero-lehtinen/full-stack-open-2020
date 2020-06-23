@@ -60,3 +60,12 @@ Content-Type: application/json
 	"username": "asdf",
 	"password": "asdf"
 }
+
+###
+
+POST http://localhost:3001/api/blogs/5ef1175f994bd30775c3e7be/comments
+Content-Type: application/json
+
+{
+	"comment": "test comment"
+}

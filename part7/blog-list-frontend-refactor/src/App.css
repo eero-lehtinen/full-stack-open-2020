@@ -1,0 +1,69 @@
+@import '~antd/dist/antd.css';
+
+
+
+
+body {
+	background-color: lightgrey;
+}
+
+.wrapper {
+	background-color: lightgrey;
+	padding: 40px;
+	max-width: 1000px;
+	margin: auto;
+}
+
+.main {
+	border-radius: 10px;
+}
+
+.ant-menu {
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+.ant-menu > span {
+	float:right;
+	margin-right: 8px;
+}
+.ant-menu > span > * {
+	margin-left: 10px;
+}
+
+.ant-layout-content {
+	padding: 20px 30px 30px 30px;
+}
+
+.ant-alert {
+	position: fixed;
+	bottom: 40px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 100;
+}
+
+.ant-list-item:not(:first-child) {
+	border-top: 1px solid lightgrey;
+}
+
+.ant-divider::before, .ant-divider::after {
+	border-top: 1px solid lightgrey !important;
+}
+
+.togglable {
+	margin-bottom: 10px;
+}
+
+.ant-form {
+	max-width: 450px;
+}
+
+input.comment {
+	max-width: 500px;
+}
+
+.close-toggle {
+	margin-top: 10px;
+}
+

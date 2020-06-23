@@ -37,6 +37,27 @@ export const addLike = (id) => {
 	}
 }
 
+export const addComment = (blogId, comment) => {
+	return async (dispatch, getState) => {
+		const state = getState()
+		const blog = state.blogs.find(blog => blog.id === blogId)
+		if (blog) {
+			try {
+				const updatedComments = await blogService.comment(blogId, comment)
+				console.log(blog)
+				console.log({ ...blog, comments: updatedComments })
+				dispatch({
+					type: 'UPDATE_BLOG',
+					data: { ...blog, comments: updatedComments }
+				})
+			}
+			catch (error) {
+				dispatch(setNotification(error.message, 5, true))
+			}
+		}
+	}
+}
+
 export const removeBlog = (blog) => {
 	return async (dispatch) => {
 		try {

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@testing-library/user-event": "^7.2.1",
+    "antd": "^4.3.5",
     "axios": "^0.19.2",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
@@ -17,10 +18,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint .",
-    "cypress:open": "cypress open"
+    "lint": "eslint ."
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -41,7 +40,6 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
-    "cypress": "^4.8.0",
     "eslint-plugin-cypress": "^2.11.1",
     "eslint-plugin-jest": "^23.13.2",
     "redux-devtools-extension": "^2.13.8"

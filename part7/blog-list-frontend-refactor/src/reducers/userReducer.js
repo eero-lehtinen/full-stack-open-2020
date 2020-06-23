@@ -7,8 +7,6 @@ export const initializeUsers = () => {
 			type: 'INIT_USERS',
 			data: users,
 		})
-
-		console.log(users)
 	}
 }
 
