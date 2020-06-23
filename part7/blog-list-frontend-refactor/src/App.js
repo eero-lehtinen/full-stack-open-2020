@@ -43,21 +43,22 @@ const App = () => {
 			<Layout className='main'>
 				{loggedUser !== null && <NavBar />}
 				<Layout.Content>
-					{loggedUser === null && <LoginForm />}
-					<Switch>
-						<Route path='/blogs/:id'>
-							<Blog />
-						</Route>
-						<Route path='/users/:id'>
-							<User />
-						</Route>
-						<Route path='/users'>
-							<Users />
-						</Route>
-						<Route path='/'>
-							{loggedUser === null ? null : home()}
-						</Route>
-					</Switch>
+					{loggedUser === null
+						? <LoginForm />
+						: (<Switch>
+							<Route path='/blogs/:id'>
+								<Blog />
+							</Route>
+							<Route path='/users/:id'>
+								<User />
+							</Route>
+							<Route path='/users'>
+								<Users />
+							</Route>
+							<Route path='/'>
+								{loggedUser === null ? null : home()}
+							</Route>
+						</Switch>)}
 				</Layout.Content>
 				<Notification />
 			</Layout>
