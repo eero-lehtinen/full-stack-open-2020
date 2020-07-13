@@ -85,10 +85,10 @@ const resolvers = {
 		authorCount: () => Author.collection.countDocuments(),
 		allBooks: (root, args) => {
 			if (args.genre) {
-				return Book.find({ genres: { $in: args.genre } })
+				return Book.find({ genres: { $in: args.genre } }).populate("author")
 			}
 
-			return Book.find({})
+			return Book.find({}).populate("author")
 		},
 		allAuthors: () => {
 			return Author.find({})
@@ -96,7 +96,9 @@ const resolvers = {
 		me: (root, args, { currentUser }) => currentUser
 	},
 	Author: {
-		bookCount: (root) => books.filter(b => b.author === root.name).length
+		bookCount: (root) => {
+			return Book.collection.countDocuments({ author: root._id })
+		}
 	},
 	Mutation: {
 		addBook: async (root, args, { currentUser }) => {
