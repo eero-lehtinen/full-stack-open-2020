@@ -11,7 +11,10 @@ const NewBook = (props) => {
 
   const [createBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
-    onError: error => console.error(error)
+    onCompleted: () => props.fetchFavorites(),
+    onError: (error) => {
+      console.error(error)
+    }
   })
 
   if (!props.show) {
@@ -21,7 +24,7 @@ const NewBook = (props) => {
   const submit = async (event) => {
     event.preventDefault()
 
-    createBook({ variables: { title, author, published: parseInt(published), genres } })
+    createBook({ variables: { title, author, published: parseInt(published) || 0, genres } })
 
     setTitle('')
     setPublished('')
