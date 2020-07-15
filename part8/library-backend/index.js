@@ -1,9 +1,12 @@
-const { ApolloServer, gql, UserInputError, AuthenticationError } = require('apollo-server')
+const { PubSub, ApolloServer, gql, UserInputError, AuthenticationError } = require('apollo-server')
 const mongoose = require('mongoose')
 const Book = require('./models/book')
 const Author = require('./models/author')
 const User = require('./models/user')
 const jwt = require('jsonwebtoken')
+
+const pubsub = new PubSub()
+
 
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
@@ -53,6 +56,10 @@ const typeDefs = gql`
 		allAuthors: [Author!]!
 		me: User
 	}
+
+	type Subscription {
+		bookAdded: Book!
+	}    
 	
 	type Mutation {
 		addBook(
@@ -84,19 +91,38 @@ const resolvers = {
 		bookCount: () => Book.collection.countDocuments(),
 		authorCount: () => Author.collection.countDocuments(),
 		allBooks: (root, args) => {
+			console.log("fetch allBooks!")
 			if (args.genre) {
 				return Book.find({ genres: { $in: args.genre } }).populate("author")
 			}
 
 			return Book.find({}).populate("author")
 		},
-		allAuthors: () => {
-			return Author.find({})
+		allAuthors: async () => {
+			console.log("fetch allAuthors!")
+			let authors = await Author.find({})
+			authorsJson = authors.map(author => author.toJSON())
+
+			const books = await Book.find({})
+			booksJson = books.map(book => book.toJSON())
+
+			for (let author of authorsJson) {
+				author.bookCount = 0
+				for (const book of booksJson) {
+					if (book.author.toString() === author.id.toString()) {
+						author.bookCount++
+					}
+				}
+			}
+			return authorsJson
 		},
 		me: (root, args, { currentUser }) => currentUser
 	},
 	Author: {
 		bookCount: (root) => {
+			if (root.bookCount)
+				return root.bookCount
+
 			return Book.collection.countDocuments({ author: root._id })
 		}
 	},
@@ -127,6 +153,8 @@ const resolvers = {
 					invalidArgs: args,
 				})
 			}
+
+			pubsub.publish('BOOK_ADDED', { bookAdded: book })
 
 			return book
 		},
@@ -165,7 +193,7 @@ const resolvers = {
 		login: async (root, args) => {
 			const user = await User.findOne({ username: args.username })
 
-			if (!user || args.password !== 'pw') {
+			if (!user || args.password !== 'asd') {
 				throw new UserInputError("wrong credentials")
 			}
 
@@ -175,6 +203,11 @@ const resolvers = {
 			}
 
 			return { value: jwt.sign(userForToken, JWT_SECRET) }
+		}
+	},
+	Subscription: {
+		bookAdded: {
+			subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
 		}
 	}
 }
@@ -194,6 +227,7 @@ const server = new ApolloServer({
 	}
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
 	console.log(`Server ready at ${url}`)
+	console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })

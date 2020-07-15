@@ -1,39 +1,75 @@
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
 import Recommend from './components/Recommend'
-import { useApolloClient, useQuery, useLazyQuery } from '@apollo/client'
-import { ALL_BOOKS, ME } from './queries'
+import { useApolloClient, useLazyQuery, useSubscription, useMutation } from '@apollo/client'
+import { ALL_BOOKS, ME, BOOK_ADDED, ALL_AUTHORS, LOGIN } from './queries'
 
 const App = () => {
-  const [token, setToken] = useState(null)
   const [page, setPage] = useState('authors')
   const client = useApolloClient()
-  const userResult = useQuery(ME)
-  const [getBooks, booksResult] = useLazyQuery(ALL_BOOKS)
+  const [getFavoriteBooks, favoriteBooksResult] = useLazyQuery(ALL_BOOKS)
+  const [getUser, userResult] = useLazyQuery(ME, {
+    onCompleted: (data) => getFavoriteBooks({ variables: { genre: data.me.favoriteGenre } })
+  })
+  const [getAuthors] = useLazyQuery(ALL_AUTHORS, { fetchPolicy: "network-only" })
+  const [logged, setLogged] = useState(false)
 
-  const logout = () => {
-    setToken(null)
-    localStorage.clear()
-    client.resetStore()
+  const [login] = useMutation(LOGIN, {
+    onCompleted: (data) => {
+      localStorage.setItem('phonenumbers-user-token', data.login.value)
+      setLogged(true)
+      getUser()
+    },
+    onError: (error) => console.error(error)
+  })
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const bookAdded = subscriptionData.data.bookAdded
+
+      window.alert(`added book ${bookAdded.title}`)
+
+      getAuthors()
+
+      if (bookAdded.author)
+        if (userResult) {
+          addBookToCache(bookAdded)
+          for (const genre of bookAdded.genres) {
+            addBookToCache(bookAdded, { genre: genre })
+          }
+        }
+    }
+  })
+
+
+  const addBookToCache = (bookData, variables = undefined) => {
+    try {
+      const oldData = client.readQuery({
+        query: ALL_BOOKS,
+        variables: variables
+      })
+
+      client.writeQuery({
+        query: ALL_BOOKS,
+        variables: variables,
+        data: {
+          allBooks: [...oldData.allBooks, bookData]
+        }
+      })
+    }
+    catch (error) {
+      return
+    }
   }
 
-  useEffect(() => {
-    fetchFavorites()
-  }, [userResult.data]) // eslint-disable-line
-
-  const fetchFavorites = () => {
-    if (userResult.data) {
-      if (booksResult.data) {
-        booksResult.refetch()
-      }
-      else {
-        getBooks({ variables: { genre: userResult.data.me.favoriteGenre }, fetchPolicy: 'network-only' })
-      }
-    }
+  const logout = () => {
+    setLogged(false)
+    localStorage.clear()
+    client.resetStore()
   }
 
   return (
@@ -41,17 +77,17 @@ const App = () => {
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
-        {token &&
+        {logged &&
           <>
             <button onClick={() => setPage('add')}>add book</button>
             <button onClick={() => setPage('recommend')}>recommend</button>
             <button onClick={() => logout()}>logout</button>
           </>}
-        {!token && <button onClick={() => setPage('login')}>login</button>}
+        {!logged && <button onClick={() => setPage('login')}>login</button>}
       </div>
 
       <Authors
-        show={page === 'authors'} token={token}
+        show={page === 'authors'} authorsResult
       />
 
       <Books
@@ -59,15 +95,15 @@ const App = () => {
       />
 
       <NewBook
-        show={page === 'add'} fetchFavorites={fetchFavorites}
+        show={page === 'add'}
       />
 
       <Recommend
-        show={page === 'recommend'} favoriteBooksResult={booksResult} userResult={userResult}
+        show={page === 'recommend'} favoriteBooksResult={favoriteBooksResult} userResult={userResult}
       />
 
       <Login
-        show={page === 'login'} setToken={setToken}
+        show={page === 'login'} login={login}
       />
 
     </div>

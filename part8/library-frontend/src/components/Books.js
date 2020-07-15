@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { ALL_BOOKS, ALL_GENRES } from '../queries'
+import { ALL_BOOKS } from '../queries'
 import { useQuery, useLazyQuery } from '@apollo/client'
 
 const Books = (props) => {
   const [genreFilter, setGenreFilter] = useState('all genres')
   const [getBooks, booksResult] = useLazyQuery(ALL_BOOKS)
-  const genresResult = useQuery(ALL_GENRES)
+  const genresResult = useQuery(ALL_BOOKS)
 
   useEffect(() => {
     if (genreFilter === 'all genres' || genreFilter === '') {
