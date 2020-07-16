@@ -1,0 +1,18 @@
+GET http://localhost:3001/api/diagnoses
+
+### 
+
+GET http://localhost:3001/api/patients
+
+###
+
+POST http://localhost:3001/api/patients
+content-type: application/json
+
+{
+	"name": "asd",
+	"dateOfBirth": "1986-07-09",
+	"gender": "male",
+	"ssn": "asdf",
+	"occupation": "asd"
+}
