@@ -3,7 +3,7 @@ import { CoursePart, assertNever } from "../index";
 
 const Part: React.FC<{ part: CoursePart }> = ({ part }) => {
 
-	const getPartSpecificSt ring = (part: CoursePart) => {
+	const getPartSpecificString = (part: CoursePart) => {
 		switch (part.name) {
 			case "Fundamentals":
 			case "Name four":
