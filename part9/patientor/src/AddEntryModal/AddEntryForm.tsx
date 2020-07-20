@@ -129,8 +129,6 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
 
 	const initialValues = getInitialValues(currentType);
 
-	console.log(initialValues);
-
 	return (
 		<>
 			<label><strong>Type</strong></label>
