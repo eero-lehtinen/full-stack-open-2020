@@ -1,14 +1,3 @@
-export interface Diagnosis {
-  code: string;
-  name: string;
-  latin?: string;
-}
-
-export enum Gender {
-  Male = "male",
-  Female = "female",
-  Other = "other"
-}
 
 export interface Patient {
   id: string;
@@ -20,12 +9,16 @@ export interface Patient {
   entries: Entry[];
 }
 
-interface BaseEntry {
-  id: string;
-  description: string;
-  date: string;
-  specialist: string;
-  diagnosisCodes?: Array<Diagnosis['code']>;
+export interface Diagnosis {
+  code: string;
+  name: string;
+  latin?: string;
+}
+
+export enum Gender {
+  Male = 'male',
+  Female = 'female',
+  Other = 'other'
 }
 
 export enum HealthCheckRating {
@@ -35,20 +28,29 @@ export enum HealthCheckRating {
   "CriticalRisk" = 3
 }
 
-interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
-  healthCheckRating: HealthCheckRating;
-}
-
-interface Discharge {
+export interface Discharge {
   date: string;
   criteria: string;
 }
 
 
-interface SickLeave {
+export interface SickLeave {
   startDate: string;
   endDate: string;
+}
+
+export interface BaseEntry {
+  id: string;
+  description: string;
+  date: string;
+  specialist: string;
+  diagnosisCodes?: Array<Diagnosis['code']>;
+}
+
+export enum EntryTypes {
+  Hospital = "Hospital",
+  OccupationalHealthcare = "OccupationalHealthcare",
+  HealthCheck = "HealthCheck"
 }
 
 export interface HospitalEntry extends BaseEntry {
@@ -62,7 +64,13 @@ export interface OccupationalHealthcareEntry extends BaseEntry {
   sickLeave?: SickLeave;
 }
 
+export interface HealthCheckEntry extends BaseEntry {
+  type: "HealthCheck";
+  healthCheckRating: HealthCheckRating;
+}
+
 export type Entry =
   | HospitalEntry
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
+

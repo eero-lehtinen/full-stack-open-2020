@@ -37,7 +37,7 @@ const parseBaseEntryValues = (data: any): BaseEntry => {
 };
 
 const parseExtendedEntryValues = (data: any):
-	Pick<HealthCheckEntry, 'type' | 'healthCheckRating'>
+	| Pick<HealthCheckEntry, 'type' | 'healthCheckRating'>
 	| Pick<HospitalEntry, 'type' | 'discharge'>
 	| Pick<OccupationalHealthcareEntry, 'type' | 'employerName'>
 	| Pick<OccupationalHealthcareEntry, 'type' | 'employerName' | 'sickLeave'> => {
@@ -146,8 +146,11 @@ const parseDischarge = (object: any): Discharge => {
 	return object as Discharge;
 };
 
-const parseSickLeave = (object: any): SickLeave => {
-	if (!object || !object.startDate || !object.endDate || !isDate(object.startDate) || !isDate(object.endDate)) {
+const parseSickLeave = (object: any): SickLeave | undefined => {
+	if (!object || !object.startDate || !object.endDate) {
+		return undefined;
+	}
+	else if (!isDate(object.startDate) || !isDate(object.endDate)) {
 		throw new Error('Invalid or missing value: sickLeave');
 	}
 	return object as SickLeave;

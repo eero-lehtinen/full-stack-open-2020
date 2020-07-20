@@ -3,7 +3,7 @@ import { List, Header } from "semantic-ui-react";
 
 import { Entry, Diagnosis } from "../types";
 
-const EntryDetails: React.FC<{ entry: Entry, diagnoses: { [code: string]: Diagnosis } }> = ({ entry, diagnoses }) => {
+const EntryDetails: React.FC<{ entry: Entry; diagnoses: { [code: string]: Diagnosis } }> = ({ entry, diagnoses }) => {
 
 	const assertNever = (value: never): never => {
 		throw new Error(`Unhandled value: ${JSON.stringify(value)}`);
@@ -21,7 +21,7 @@ const EntryDetails: React.FC<{ entry: Entry, diagnoses: { [code: string]: Diagno
 			default:
 				return assertNever(entry);
 		}
-	}
+	};
 
 	return (
 		<List.Item>

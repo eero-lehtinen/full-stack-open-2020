@@ -1,6 +1,7 @@
 {
 	"eslint.enable": true,
 	"eslint.workingDirectories": [
+		"./part9/patientor",
 		"./part9/patientor-backend",
 		"./part9/my-app",
 	]
